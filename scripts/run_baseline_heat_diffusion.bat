@@ -1,3 +1,0 @@
-@echo off
-powershell -ExecutionPolicy Bypass -File "%~dp0run_baseline_heat_diffusion.ps1" %*
-exit /b %ERRORLEVEL%
