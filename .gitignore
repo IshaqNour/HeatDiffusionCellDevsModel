@@ -1,2 +1,3 @@
-bin/
-build/
+/build/
+/bin/
+/heat_diffusion_log.csv

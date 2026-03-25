@@ -1,0 +1,46 @@
+{
+  "scenario": {
+    "shape": [10, 10],
+    "origin": [0, 0],
+    "wrapped": true
+  },
+  "cells": {
+    "default": {
+      "delay": "transport",
+      "model": "heat_diffusion",
+      "cell_type": "heat_diffusion",
+      "state": {
+        "temperature": 24.0
+      },
+      "config": {
+        "hot_source_cell": false,
+        "cold_source_cell": false,
+        "output_delay": 1.0,
+        "hot_min": 30.0,
+        "hot_max": 45.0,
+        "cold_min": -10.0,
+        "cold_max": 15.0
+      },
+      "neighborhood": [
+        {
+          "type": "moore",
+          "range": 1
+        }
+      ]
+    },
+    "hot_source_cells": {
+      "config": {
+        "hot_source_cell": true
+      },
+      "eic": [["inputHeat", "inputHeat"]],
+      "cell_map": [[2, 2], [5, 5]]
+    },
+    "cold_source_cells": {
+      "config": {
+        "cold_source_cell": true
+      },
+      "eic": [["inputCold", "inputCold"]],
+      "cell_map": [[2, 8], [8, 8]]
+    }
+  }
+}
