@@ -1,38 +1,27 @@
 param(
     [Parameter(Mandatory = $true)]
     [string]$ScenarioConfig,
-    [string]$CadmiumDir = "",
     [double]$SimulationTime = 250.0,
     [string]$OutputCsv = ""
 )
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$toolchainPath = "C:\msys64\ucrt64\bin;C:\msys64\usr\bin"
 
 if (-not $OutputCsv) {
     $scenarioName = [System.IO.Path]::GetFileNameWithoutExtension($ScenarioConfig)
     $OutputCsv = Join-Path $repoRoot ("simulation_results/{0}_grid_log.csv" -f $scenarioName)
 }
 
-if (-not (Get-Command make -ErrorAction SilentlyContinue)) {
-    throw "make was not found. Run this script from a Cadmium-ready shell (Git Bash, MSYS2, or WSL with make installed)."
-}
-
 New-Item -ItemType Directory -Force (Join-Path $repoRoot "simulation_results") | Out-Null
 
 Push-Location $repoRoot
 try {
-    $env:Path = "$toolchainPath;$env:Path"
-
-    if ($CadmiumDir) {
-        & make "CADMIUM_DIR=$CadmiumDir" simulator
-    } else {
-        & make simulator
-    }
-
-    $simulatorPath = Join-Path $repoRoot "bin/heat_diffusion"
+    $simulatorPath = Join-Path $repoRoot "bin/heat_diffusion.exe"
     if (-not (Test-Path $simulatorPath)) {
-        $simulatorPath = Join-Path $repoRoot "bin/heat_diffusion.exe"
+        $simulatorPath = Join-Path $repoRoot "bin/heat_diffusion"
+    }
+    if (-not (Test-Path $simulatorPath)) {
+        throw "Simulator not found in bin/. If bin was removed, install MSYS2 with the UCRT64 gcc and make packages, clone cadmium_v2 beside this folder, and run 'C:\msys64\ucrt64\bin\mingw32-make.exe all' from the repository root."
     }
 
     & $simulatorPath $ScenarioConfig $SimulationTime $OutputCsv
@@ -56,7 +45,8 @@ try {
                     $columns.Length -ge 5 -and $columns[2] -match '^\(\d+,\d+\)$'
                 }
 
-            @($sep, $header) + $filteredRows | Set-Content $viewerCsv
+            $viewerLines = [string[]](@($sep, $header) + $filteredRows)
+            [System.IO.File]::WriteAllLines($viewerCsv, $viewerLines)
         }
     }
 }

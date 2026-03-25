@@ -1,5 +1,4 @@
 param(
-    [string]$CadmiumDir = "",
     [double]$SimulationTime = 250.0,
     [string]$OutputCsv = ""
 )
@@ -9,6 +8,5 @@ $scenario = Join-Path $repoRoot "config/heat_diffusion_reduced_cooling_viewer_co
 
 & (Join-Path $PSScriptRoot "run_heat_diffusion.ps1") `
     -ScenarioConfig $scenario `
-    -CadmiumDir $CadmiumDir `
     -SimulationTime $SimulationTime `
     -OutputCsv $OutputCsv
