@@ -10,9 +10,18 @@ if [ ! -f "$SIMULATOR" ] && [ -f "${SIMULATOR}.exe" ]; then
 fi
 "$SIMULATOR" config/heat_config_reduced_cooling.json 250
 {
-    printf "sep=;\n"
     printf "time;model_id;model_name;port_name;data\n"
-    awk -F';' 'NR > 2 && $4 == "" && $3 ~ /^\([0-9]+,[0-9]+\)$/ { print }' "$RAW_LOG"
+    awk -F';' '
+        NR > 2 && $4 == "" && $3 ~ /^\([0-9]+,[0-9]+\)$/ {
+            key = $1 ";" $3;
+            if (seen[key]++) next;
+            if (current_time != $1) {
+                current_time = $1;
+                print;
+            }
+            print;
+        }
+    ' "$RAW_LOG"
 } > log/heat_diffusion_reduced_cooling_log.csv
 rm -f "$RAW_LOG"
 echo "Reduced cooling scenario done."

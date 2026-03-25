@@ -1,85 +1,161 @@
 # Heat Diffusion Cell-DEVS Model
 
-## Overview
-This repository contains the Cadmium implementation of the Assignment 2 heat diffusion model. The simulation uses a wrapped 10x10 Cell-DEVS grid, external hot and cold trigger inputs, and four experiment configurations:
+This repository contains a Cadmium Cell-DEVS heat diffusion simulation with
+four predefined scenarios:
 - baseline
 - hotter source
 - reduced cooling
 - nonuniform initial condition
 
-The C++ model logic is kept in the `include/` and `main/` folders. The shell scripts at the repository root are the intended way to build and run the experiments.
+The build and run flow follows the same root-level shell-script structure as
+`CellDevsInformationImpact`:
+- `build_sim.sh` builds the simulator
+- `run_*_scenario.sh` builds and runs a single predefined scenario
+- generated CSV logs are written to `log/`
 
-## Project Layout
-- `include/`: cell state, cell behavior, trigger generators, and the top coupled model
-- `main/`: simulation entry point and CMake target definition
-- `config/`: experiment JSON files and the web-viewer JSON file
-- `log/`: generated CSV logs for the experiments
-- `Simulation_videos/`: place to store recorded viewer runs for the report
-- `build_sim.sh`: rebuilds the simulator
-- `run_*_scenario.sh`: builds and runs each experiment
+This repository does not use the older custom root `makefile` / `make all`
+workflow. The supported build path is the shell-script + CMake flow documented
+below.
 
-## Project Notes
-- `build/` and `bin/` are generated during compilation.
-- The repository is intended to be run through the root shell scripts rather than by invoking the executable manually.
-- If `cmake` or `make` is missing, install them before running the build script.
-- If `CADMIUM` is not set correctly, CMake will fail during configuration.
-- On Windows-like shells, `build_sim.sh` automatically chooses a compatible CMake generator so the documented commands stay the same.
+## Repository Structure
 
-## Build Requirements
-The project expects Cadmium v2 to be available through the `CADMIUM` environment variable.
+- `atomics/` and `include/`: Cell-DEVS state, cell logic, and trigger generators
+- `main/` and `top_model/`: simulation entry point and coupled model definitions
+- `config/`: scenario JSON files and the web viewer JSON
+- `log/`: generated scenario CSV logs
+- `Simulation_videos/`: optional saved viewer recordings
+- `build_sim.sh`: build helper
+- `run_base_scenario.sh`: baseline experiment
+- `run_hotter_source_scenario.sh`: hotter source experiment
+- `run_reduced_cooling_scenario.sh`: reduced cooling experiment
+- `run_nonuniform_initial_scenario.sh`: nonuniform initial experiment
+- `bin/` and `build/`: generated during compilation
 
-You also need:
-- `cmake` available from the shell PATH
-- `make`
-- a C++17-compatible compiler
-- a shell environment that can run `.sh` scripts
+## WSL Workflow
 
-If `cadmium_v2` is cloned beside this repository, a typical setup is:
+This is the recommended Windows workflow.
+
+Install the required packages once in Ubuntu/WSL:
 
 ```bash
-export CADMIUM=../cadmium_v2/include
+sudo apt update
+sudo apt install -y build-essential cmake git
 ```
 
-## Building
-From the repository root:
-```bash
-./build_sim.sh
-```
+If you are cloning from scratch inside WSL:
 
-You can also use:
 ```bash
+git clone https://github.com/SimulationEverywhere/cadmium_v2 -b dev-rt
+git clone <your-heat-diffusion-repo-url>
+cd HeatDiffusionCellDevsModel
 bash build_sim.sh
 ```
 
-The compiled executable is placed in `bin/`.
-
-## Running The Experiments
-Each scenario has its own runner script. These scripts rebuild the simulator, execute the selected configuration, and save a filtered CSV in `log/`.
+If the repositories are already on your Windows drive, open WSL and enter the
+repo through `/mnt/c/...`:
 
 ```bash
-./run_base_scenario.sh
-./run_hotter_source_scenario.sh
-./run_reduced_cooling_scenario.sh
-./run_nonuniform_initial_scenario.sh
+cd /mnt/c/Users/nou99678/Documents/A2/HeatDiffusionCellDevsModel
+bash build_sim.sh
 ```
 
-If needed, the same scripts can be launched with `bash` explicitly:
+If `cadmium_v2` is cloned beside this repository, `bash build_sim.sh` works
+without any extra setup. If Cadmium is somewhere else, set it manually:
+
+```bash
+export CADMIUM=/path/to/cadmium_v2/include
+```
+
+Run the scenario scripts one by one:
+
+```bash
+cd /mnt/c/Users/nou99678/Documents/A2/HeatDiffusionCellDevsModel
+
+bash run_base_scenario.sh
+cat log/heat_diffusion_base_scenario_log.csv
+
+bash run_hotter_source_scenario.sh
+cat log/heat_diffusion_hotter_source_log.csv
+
+bash run_reduced_cooling_scenario.sh
+cat log/heat_diffusion_reduced_cooling_log.csv
+
+bash run_nonuniform_initial_scenario.sh
+cat log/heat_diffusion_nonuniform_initial_log.csv
+```
+
+What each script generates:
+- `run_base_scenario.sh` -> `log/heat_diffusion_base_scenario_log.csv`
+- `run_hotter_source_scenario.sh` -> `log/heat_diffusion_hotter_source_log.csv`
+- `run_reduced_cooling_scenario.sh` -> `log/heat_diffusion_reduced_cooling_log.csv`
+- `run_nonuniform_initial_scenario.sh` -> `log/heat_diffusion_nonuniform_initial_log.csv`
+
+Note:
+- each run script calls `build_sim.sh` before executing the scenario
+- you can run `bash build_sim.sh` separately first if you only want to rebuild once
+
+## Bash Workflow
+
+Use this section if you are already in Linux or in a bash environment where
+`cmake`, `make`, and `g++` are available on `PATH`.
+
+Clone and build:
+
+```bash
+git clone https://github.com/SimulationEverywhere/cadmium_v2 -b dev-rt
+git clone <your-heat-diffusion-repo-url>
+cd HeatDiffusionCellDevsModel
+bash build_sim.sh
+```
+
+Run the predefined scenarios:
+
 ```bash
 bash run_base_scenario.sh
+bash run_hotter_source_scenario.sh
+bash run_reduced_cooling_scenario.sh
+bash run_nonuniform_initial_scenario.sh
 ```
 
+Check outputs:
+
+```bash
+cat log/heat_diffusion_base_scenario_log.csv
+cat log/heat_diffusion_hotter_source_log.csv
+cat log/heat_diffusion_reduced_cooling_log.csv
+cat log/heat_diffusion_nonuniform_initial_log.csv
+```
+
+## Dependencies
+
+You need:
+- Cadmium v2 headers available through `$CADMIUM`, or a sibling `../cadmium_v2`
+- `cmake`
+- `make`
+- a C++17-compatible compiler
+- a Linux or Linux-like shell environment
+
+You do not need an MSYS2-specific `C:\msys64` setup for the documented WSL
+workflow.
+
 ## Scenario Files
-The experiment inputs are defined in:
+
+Predefined simulation inputs:
 - `config/heat_config_base_scenario.json`
 - `config/heat_config_hotter_source.json`
 - `config/heat_config_reduced_cooling.json`
 - `config/heat_config_nonuniform_initial.json`
 
-The viewer configuration is:
+Viewer configuration:
 - `config/heat_diffusionVisualization_config.json`
+- `config/heat_diffusion_base_scenario_config.json`
+- `config/heat_diffusion_hotter_source_config.json`
+- `config/heat_diffusion_reduced_cooling_config.json`
+- `config/heat_diffusion_nonuniform_initial_config.json`
 
 ## Output Logs
-After running the scripts, the generated logs are stored in `log/`:
+
+Generated outputs are written to `log/`:
 - `heat_diffusion_base_scenario_log.csv`
 - `heat_diffusion_hotter_source_log.csv`
 - `heat_diffusion_reduced_cooling_log.csv`
@@ -88,10 +164,13 @@ After running the scripts, the generated logs are stored in `log/`:
 These files are the experiment outputs used for analysis and visualization.
 
 ## Cell-DEVS Web Viewer
-To visualize a run, load these two files together in the Cell-DEVS Web Viewer:
-- `config/heat_diffusionVisualization_config.json`
-- one of the scenario CSV files from `log/`
+
+To visualize a run in the Cell-DEVS Web Viewer, load:
+- one matching `*_config.json` file from `config/`
+- one matching CSV file from `log/`
 
 Examples:
-- `heat_diffusionVisualization_config.json` with `heat_diffusion_base_scenario_log.csv`
-- `heat_diffusionVisualization_config.json` with `heat_diffusion_hotter_source_log.csv`
+- `heat_diffusion_base_scenario_config.json` with `heat_diffusion_base_scenario_log.csv`
+- `heat_diffusion_hotter_source_config.json` with `heat_diffusion_hotter_source_log.csv`
+- `heat_diffusion_reduced_cooling_config.json` with `heat_diffusion_reduced_cooling_log.csv`
+- `heat_diffusion_nonuniform_initial_config.json` with `heat_diffusion_nonuniform_initial_log.csv`
