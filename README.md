@@ -55,7 +55,7 @@ If the repositories are already on your Windows drive, open WSL and enter the
 repo through `/mnt/c/...`:
 
 ```bash
-cd /mnt/c/Users/nou99678/Documents/A2/HeatDiffusionCellDevsModel
+cd /mnt/c/Users/.../HeatDiffusionCellDevsModel
 bash build_sim.sh
 ```
 
@@ -164,13 +164,12 @@ Generated outputs are written to `log/`:
 These files are the experiment outputs used for analysis and visualization.
 
 ## Cell-DEVS Web Viewer
-
-To visualize a run in the Cell-DEVS Web Viewer, load:
-- one matching `*_config.json` file from `config/`
-- one matching CSV file from `log/`
-
+Use the dedicated visualization file together with any matching CSV log:
+- config/heat_diffusionVisualization_config.json
+- one CSV file from log/
 Examples:
-- `heat_diffusion_base_scenario_config.json` with `heat_diffusion_base_scenario_log.csv`
-- `heat_diffusion_hotter_source_config.json` with `heat_diffusion_hotter_source_log.csv`
-- `heat_diffusion_reduced_cooling_config.json` with `heat_diffusion_reduced_cooling_log.csv`
-- `heat_diffusion_nonuniform_initial_config.json` with `heat_diffusion_nonuniform_initial_log.csv`
+- heat_diffusionVisualization_config.json with heat_diffusion_base_scenario_log.csv
+- heat_diffusionVisualization_config.json with heat_diffusion_hotter_source_log.csv
+- heat_diffusionVisualization_config.json with heat_diffusion_reduced_cooling_log.csv
+- heat_diffusionVisualization_config.json with heat_diffusion_nonuniform_initial_log.csv
+The visualization JSON is intentionally simpler than the simulation JSON so the web viewer only receives the grid layout and color mapping it needs.

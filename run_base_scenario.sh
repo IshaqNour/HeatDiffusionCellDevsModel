@@ -10,7 +10,7 @@ if [ ! -f "$SIMULATOR" ] && [ -f "${SIMULATOR}.exe" ]; then
 fi
 "$SIMULATOR" config/heat_config_base_scenario.json 250
 {
-    printf "time;model_id;model_name;port_name;data\n"
+    printf "sep=;\\ntime;model_id;model_name;port_name;data\\n"
     awk -F';' '
         NR > 2 && $4 == "" && $3 ~ /^\([0-9]+,[0-9]+\)$/ {
             key = $1 ";" $3;
