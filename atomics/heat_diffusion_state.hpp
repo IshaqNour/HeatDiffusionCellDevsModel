@@ -34,3 +34,4 @@ inline void from_json(const nlohmann::json& j, HeatDiffusionState& s) {
 }
 
 #endif
+

@@ -40,3 +40,4 @@ elseif(EXISTS "${CMAKE_SOURCE_DIR}/../../DESTimes/include")
 endif()
 
 target_compile_features(${projectName} PUBLIC cxx_std_17)
+

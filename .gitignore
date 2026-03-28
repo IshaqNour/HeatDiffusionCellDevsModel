@@ -1,3 +1,6 @@
 /build/
 /bin/
 /heat_diffusion_log.csv
+/cmake_probe.cmake
+/Simulation_pictures/
+

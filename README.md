@@ -7,15 +7,10 @@ four predefined scenarios:
 - reduced cooling
 - nonuniform initial condition
 
-The build and run flow follows the same root-level shell-script structure as
-`CellDevsInformationImpact`:
+The build and run flow is as follows:
 - `build_sim.sh` builds the simulator
 - `run_*_scenario.sh` builds and runs a single predefined scenario
 - generated CSV logs are written to `log/`
-
-This repository does not use the older custom root `makefile` / `make all`
-workflow. The supported build path is the shell-script + CMake flow documented
-below.
 
 ## Repository Structure
 
@@ -59,8 +54,8 @@ cd /mnt/c/Users/.../HeatDiffusionCellDevsModel
 bash build_sim.sh
 ```
 
-If `cadmium_v2` is cloned beside this repository, `bash build_sim.sh` works
-without any extra setup. If Cadmium is somewhere else, set it manually:
+`build_sim.sh` automatically uses `../cadmium_v2/include` if `cadmium_v2` is
+cloned beside this repository. If Cadmium is somewhere else, set it manually:
 
 ```bash
 export CADMIUM=/path/to/cadmium_v2/include
@@ -69,26 +64,26 @@ export CADMIUM=/path/to/cadmium_v2/include
 Run the scenario scripts one by one:
 
 ```bash
-cd /mnt/c/Users/nou99678/Documents/A2/HeatDiffusionCellDevsModel
+cd /mnt/c/Users/.../HeatDiffusionCellDevsModel
 
 bash run_base_scenario.sh
-cat log/heat_diffusion_base_scenario_log.csv
+cat log/grid_base_log.csv
 
 bash run_hotter_source_scenario.sh
-cat log/heat_diffusion_hotter_source_log.csv
+cat log/grid_hotter_source_log.csv
 
 bash run_reduced_cooling_scenario.sh
-cat log/heat_diffusion_reduced_cooling_log.csv
+cat log/grid_reduced_cooling_log.csv
 
 bash run_nonuniform_initial_scenario.sh
-cat log/heat_diffusion_nonuniform_initial_log.csv
+cat log/grid_nonuniform_initial_log.csv
 ```
 
 What each script generates:
-- `run_base_scenario.sh` -> `log/heat_diffusion_base_scenario_log.csv`
-- `run_hotter_source_scenario.sh` -> `log/heat_diffusion_hotter_source_log.csv`
-- `run_reduced_cooling_scenario.sh` -> `log/heat_diffusion_reduced_cooling_log.csv`
-- `run_nonuniform_initial_scenario.sh` -> `log/heat_diffusion_nonuniform_initial_log.csv`
+- `run_base_scenario.sh` -> `log/grid_base_log.csv`
+- `run_hotter_source_scenario.sh` -> `log/grid_hotter_source_log.csv`
+- `run_reduced_cooling_scenario.sh` -> `log/grid_reduced_cooling_log.csv`
+- `run_nonuniform_initial_scenario.sh` -> `log/grid_nonuniform_initial_log.csv`
 
 Note:
 - each run script calls `build_sim.sh` before executing the scenario
@@ -120,10 +115,10 @@ bash run_nonuniform_initial_scenario.sh
 Check outputs:
 
 ```bash
-cat log/heat_diffusion_base_scenario_log.csv
-cat log/heat_diffusion_hotter_source_log.csv
-cat log/heat_diffusion_reduced_cooling_log.csv
-cat log/heat_diffusion_nonuniform_initial_log.csv
+cat log/grid_base_log.csv
+cat log/grid_hotter_source_log.csv
+cat log/grid_reduced_cooling_log.csv
+cat log/grid_nonuniform_initial_log.csv
 ```
 
 ## Dependencies
@@ -135,9 +130,6 @@ You need:
 - a C++17-compatible compiler
 - a Linux or Linux-like shell environment
 
-You do not need an MSYS2-specific `C:\msys64` setup for the documented WSL
-workflow.
-
 ## Scenario Files
 
 Predefined simulation inputs:
@@ -147,29 +139,30 @@ Predefined simulation inputs:
 - `config/heat_config_nonuniform_initial.json`
 
 Viewer configuration:
-- `config/heat_diffusionVisualization_config.json`
-- `config/heat_diffusion_base_scenario_config.json`
-- `config/heat_diffusion_hotter_source_config.json`
-- `config/heat_diffusion_reduced_cooling_config.json`
-- `config/heat_diffusion_nonuniform_initial_config.json`
+- `config/grid_base_config.json`
+- `config/grid_hotter_source_config.json`
+- `config/grid_reduced_cooling_config.json`
+- `config/grid_nonuniform_initial_config.json`
 
 ## Output Logs
 
 Generated outputs are written to `log/`:
-- `heat_diffusion_base_scenario_log.csv`
-- `heat_diffusion_hotter_source_log.csv`
-- `heat_diffusion_reduced_cooling_log.csv`
-- `heat_diffusion_nonuniform_initial_log.csv`
+- `grid_base_log.csv`
+- `grid_hotter_source_log.csv`
+- `grid_reduced_cooling_log.csv`
+- `grid_nonuniform_initial_log.csv`
 
 These files are the experiment outputs used for analysis and visualization.
 
 ## Cell-DEVS Web Viewer
-Use the dedicated visualization file together with any matching CSV log:
-- config/heat_diffusionVisualization_config.json
-- one CSV file from log/
+
+To visualize a run in the Cell-DEVS Web Viewer, load:
+- one matching `grid_*_config.json` file from `config/`
+- one matching CSV file from `log/`
+
 Examples:
-- heat_diffusionVisualization_config.json with heat_diffusion_base_scenario_log.csv
-- heat_diffusionVisualization_config.json with heat_diffusion_hotter_source_log.csv
-- heat_diffusionVisualization_config.json with heat_diffusion_reduced_cooling_log.csv
-- heat_diffusionVisualization_config.json with heat_diffusion_nonuniform_initial_log.csv
-The visualization JSON is intentionally simpler than the simulation JSON so the web viewer only receives the grid layout and color mapping it needs.
+- `grid_base_config.json` with `grid_base_log.csv`
+- `grid_hotter_source_config.json` with `grid_hotter_source_log.csv`
+- `grid_reduced_cooling_config.json` with `grid_reduced_cooling_log.csv`
+- `grid_nonuniform_initial_config.json` with `grid_nonuniform_initial_log.csv`
+
